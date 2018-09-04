@@ -197,7 +197,7 @@ const removingPayment = (selectedItem) => {
 const verifiyingCondition = (labelElement, switchCase, inputElement, event, message) =>{    
        inputElement.addEventListener(event, (e) => {
            ///creating a element          
-           let span = document.createElement('p');
+           let span = document.createElement('span');
            span.setAttribute('class', 'error');
            // if condition is true append child if it dosent have a child and display message
            //else remove elemnt if it has a child
@@ -257,9 +257,9 @@ const checkInputFields = () => {
     const registerLegend = form.children[2].children[0];    
     
     //Name Label
-    verifiyingCondition(nameLabel, 1, inputName, 'focusout', 'Please Enter Full Name');
+    verifiyingCondition(nameLabel, 1, inputName, 'focusout', 'Please Enter Your Full Name');
     //Email Label
-    verifiyingCondition(emailLabel, 2, inputEmail, 'focusout', 'Please Enter Valid Email');
+    verifiyingCondition(emailLabel, 2, inputEmail, 'focusout', 'Please Enter A Valid Email');
     //T-Shirt Info
     verifiyingCondition(TshirtLegend, 3, design , 'change', 'Please Choose A Shirt Design & Color');
     //Register for activities  
@@ -269,9 +269,9 @@ const checkInputFields = () => {
     //Payment Info Credit Card Number
     verifiyingCondition(creditCardLabel, 7, ccNumber, 'focusout', 'Please Enter A Valid Credi card Number');
     //Payment Info Zip Code
-    verifiyingCondition(zipCodeLabel, 5, zipCode, 'focusout', 'Please Enter A Valid Zip Code');    
+    verifiyingCondition(zipCodeLabel, 5, zipCode, 'focusout', 'Enter A Valid Zip Code');    
     //Payment Info CVV
-    verifiyingCondition(CVVLabel, 6, CVV, 'focusout', 'Please Enter A valid CVV Number');   
+    verifiyingCondition(CVVLabel, 6, CVV, 'focusout', 'Enter A valid CVV Number');   
 }
 
 //When Form Is Submitted  Add A message At Bottom for 10 Seconds
@@ -286,10 +286,10 @@ const resetForm = () =>{
     form.reset();
     totalCost = 0;
     totalContainer.textContent = `Total: $${totalCost}.00`;
-    findinItems()
+    findinItems();
     for(let label of labels){
       label.children[0].disabled = false;
-        labels[i].style.color = "#8a8a8a";
+      label.style.color = "#8a8a8a";
     }
 }
 

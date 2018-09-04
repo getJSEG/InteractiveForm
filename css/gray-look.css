@@ -46,6 +46,10 @@ input:placeholder-shown{
     letter-spacing: 1px;
 }
 
+label[for="exp-month"]{
+    clear: both;
+}
+
 select{
     padding: 10px;
     border-radius: 5px;
