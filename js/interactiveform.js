@@ -193,13 +193,14 @@ const removingPayment = (selectedItem) => {
         break;
     }
 }
-//function that has two(2) parameters the DOM Element thats targeted And a boolen witch determines if class attribute is added or removed
+//this show anderror when the input field is empty or not valid
 const verifiyingCondition = (labelElement, switchCase, inputElement, event, message) =>{    
        inputElement.addEventListener(event, (e) => {
-           //updating and validating condition from the fuction and setting and removing 'error' class           
+           ///creating a element          
            let span = document.createElement('p');
            span.setAttribute('class', 'error');
-           
+           // if condition is true append child if it dosent have a child and display message
+           //else remove elemnt if it has a child
            if(liveValidation(switchCase)){
                if(labelElement.children.length === 0){
                    labelElement.append(span);
