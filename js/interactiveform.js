@@ -8,6 +8,11 @@ const jobRole = document.querySelector('#title');
 const labels = document.querySelectorAll('.activities label');
 const activities = document.querySelector('.activities');
 let itemsSelected = 0;
+let totalCost = 0;
+//creating and appeding div container for totalCost and adding a class attribute
+const totalContainer = document.createElement('div');
+activities.appendChild(totalContainer);
+totalContainer.setAttribute('class', 'total');
 
 //T-Shirt Info
 const colorOptions = document.querySelectorAll('#color option');
@@ -37,9 +42,9 @@ const submitButton = document.querySelector('button');
 //Regular Expressions
 const emailRegExp = new RegExp(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/);// cheks for email
 const nameRegExp = new RegExp(/^(([A-Za-z]+[\-\']?)*([A-Za-z]+)?\s)+([A-Za-z]+[\-\']?)*([A-Za-z]+)?$/);// checks for first and last name with a space in between first and last
-const ccNumberRegExp = new RegExp(/^(\d{4}[- ]){3}\d{4}|\d{16}$/);//checks for a 16 digit credit card number all together or with dashes and spaces separating the (ex. 1234123412341234, 1234-1234-1234-1234 and 1234 1234 1234 1234)
+const ccNumberRegExp = new RegExp(/^([0-9]{13}(?:[0-9]{3})?)$/);//checks for a 13 or 16 digit number
 const zipCodeRegExp = new RegExp(/(^\d{5}$)|(^\d{5}-\d{4}$)$/);  //Checks for U.S. zipcode
-const cvvRegExp = new RegExp(/^[0-9]{3,4}$/); //Checks for CVV Code(3 or 4 digits Only)
+const cvvRegExp = new RegExp(/^[0-9]{3}$/); //Checks for CVV Code(3 digits Only)
 const priceRegExp = new RegExp(/\$(\d+.\d{1,2})/); //Finds the any numbers with the literal Char '$' and/or number following '.' 1 and/or 2 decimal places
 const TimeRegExp = new RegExp(/(Monday|Tuesday|Wednesday|Thurday|Friday|Saturday|Sunday)+ (\d{1,2}(am|pm)+\-+\d{1,2}(am|pm))/); //Checks for day of the week and Time in the registration for activites
 
@@ -77,6 +82,7 @@ const findinItems = () => {
     itemsFound = 0;
     //removing option elements and not displaying the color 'selection' field
     removeElements();
+    design.setAttribute("selected","selected");
     // gets the 'Design' value that the user selects and removes 'Theme -' from the string and sets it to lowercase
     const value = design.selectedOptions[0].innerHTML.replace(/Theme - /g,'').toLowerCase();
     
@@ -104,13 +110,7 @@ const findinItems = () => {
     }
 }
 
-const registerForActivities = () => {    
-    let totalCost = 0;
-    //creating and appeding div container for totalCost and adding a class attribute
-    const totalContainer = document.createElement('div');
-    activities.appendChild(totalContainer);
-    totalContainer.setAttribute('class', 'total');
-
+const registerForActivities = () => {
     totalContainer.textContent = `Total: $${totalCost}.00`;
     for(let label of labels){
         label.addEventListener('change', (e) => {
@@ -162,7 +162,7 @@ const paymentSelection = () => {
     //Make 'Credit Card' default payment option
     options[1].setAttribute("selected","selected");
     //showing credit card payment option
-    removingPayment('credit card'); 
+    removingPayment('credit card');
     
     payment.addEventListener('change', (e) => {
         //get the selected form of payment and passes it to the function
@@ -194,10 +194,22 @@ const removingPayment = (selectedItem) => {
     }
 }
 //function that has two(2) parameters the DOM Element thats targeted And a boolen witch determines if class attribute is added or removed
-const verifiyingCondition = (labelElement, switchCase, inputElement, event) =>{     
+const verifiyingCondition = (labelElement, switchCase, inputElement, event, message) =>{    
        inputElement.addEventListener(event, (e) => {
-           //updating and validating condition from the fuction and setting and removing 'error' class
-          liveValidation(switchCase) ? labelElement.setAttribute('class', 'error') : labelElement.removeAttribute('class', 'error');
+           //updating and validating condition from the fuction and setting and removing 'error' class           
+           let span = document.createElement('p');
+           span.setAttribute('class', 'error');
+           
+           if(liveValidation(switchCase)){
+               if(labelElement.children.length === 0){
+                   labelElement.append(span);
+                   span.textContent = message;
+                }
+            }else{
+                if(labelElement.children.length === 1){
+                    labelElement.children[0].remove();
+                }
+            }
            disableButton();
        });
 }
@@ -226,7 +238,7 @@ const liveValidation = (cases) => {
         break;
         case 7:
             ccNumberValue = ccNumber.value;
-            return (!(ccNumberRegExp.test(ccNumberValue )) || ccNumberValue  === '');
+            return !(ccNumberRegExp.test(ccNumberValue));
         break;
     }
 }
@@ -244,22 +256,40 @@ const checkInputFields = () => {
     const registerLegend = form.children[2].children[0];    
     
     //Name Label
-    verifiyingCondition(nameLabel, 1, inputName, 'focusout');
+    verifiyingCondition(nameLabel, 1, inputName, 'focusout', 'Please Enter Full Name');
     //Email Label
-    verifiyingCondition(emailLabel, 2, inputEmail, 'focusout');
+    verifiyingCondition(emailLabel, 2, inputEmail, 'focusout', 'Please Enter Valid Email');
     //T-Shirt Info
-    verifiyingCondition(TshirtLegend, 3, design , 'change');
+    verifiyingCondition(TshirtLegend, 3, design , 'change', 'Please Choose A Shirt Design & Color');
     //Register for activities  
     for(let label of labels){
-        verifiyingCondition(registerLegend, 4, label, 'change');
+        verifiyingCondition(registerLegend, 4, label, 'change','Please Choose atleast 1(one) Activity');
     }
     //Payment Info Credit Card Number
-    verifiyingCondition(creditCardLabel, 7, ccNumber, 'focusout');
+    verifiyingCondition(creditCardLabel, 7, ccNumber, 'focusout', 'Please Enter A Valid Credi card Number');
     //Payment Info Zip Code
-    verifiyingCondition(zipCodeLabel, 5, zipCode, 'focusout');    
+    verifiyingCondition(zipCodeLabel, 5, zipCode, 'focusout', 'Please Enter A Valid Zip Code');    
     //Payment Info CVV
-    verifiyingCondition(CVVLabel, 6, CVV, 'focusout');
-    
+    verifiyingCondition(CVVLabel, 6, CVV, 'focusout', 'Please Enter A valid CVV Number');   
+}
+
+//When Form Is Submitted  Add A message At Bottom for 10 Seconds
+const sumbitMessage = () =>{
+    const span = document.createElement('h3');
+    form.appendChild(span);
+    span.textContent= 'Thank you! Your Form Was Submitted';
+    setTimeout(() => {span.textContent =''; } , 10000);
+}
+//Resetting the form
+const resetForm = () =>{
+    form.reset();
+    totalCost = 0;
+    totalContainer.textContent = `Total: $${totalCost}.00`;
+    findinItems()
+    for(let label of labels){
+      label.children[0].disabled = false;
+        labels[i].style.color = "#8a8a8a";
+    }
 }
 
 const disableButton = () =>{       
@@ -267,11 +297,21 @@ const disableButton = () =>{
     //else disable button
     if(!liveValidation(1) && !liveValidation(2) && !liveValidation(3) && !liveValidation(4) && ((!liveValidation(5) && !liveValidation(6) && !liveValidation(7)) || creditCardSelected === false)){
        submitButton.disabled = false;
-        // 
+        //
+        submitButton.addEventListener('click', (e) => {
+            //Prevent Button Defoult
+            e.preventDefault();
+            //resetting the form
+            resetForm();
+            //message when user submits form
+            sumbitMessage();
+            //make make credit card defoult form of payment when user submits
+            removingPayment('credit card');
+            //disable button when, so the user can't submits with out filling form again
+            submitButton.disabled = true;
+        });
     } else{ submitButton.disabled = true; }
 }
-
-disableButton();
 
 basicInfo();
 tShirtInfo();
@@ -281,3 +321,4 @@ paymentSelection();
 checkInputFields();
 
 removeElements();
+disableButton();
